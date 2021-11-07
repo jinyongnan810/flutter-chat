@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  const AuthForm({Key? key}) : super(key: key);
+  AuthForm(this.submitForm);
+  // declare detailed function format passed from parent
+  final Future<void> Function(
+      String email, String username, String password, bool isLogin) submitForm;
 
   @override
   _AuthFormState createState() => _AuthFormState();
@@ -18,26 +21,15 @@ class _AuthFormState extends State<AuthForm>
   String _password = '';
   final _usernameFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
-  void _trySubmit() {
+  void _trySubmit() async {
     final validated = this._formKey.currentState!.validate();
     if (!validated) return;
     // close the keyboard if its still there
     FocusScope.of(context).unfocus();
     this._formKey.currentState!.save();
-    print('ok');
-  }
-
-  void _showErrorDialog(String msg) {
-    showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-              title: Text('Authenticate Error'),
-              content: Text(msg),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(), child: Text('OK'))
-              ],
-            ));
+    // print('ok');
+    await widget.submitForm(
+        _email.trim(), _username.trim(), _password.trim(), _isLogin);
   }
 
   @override
