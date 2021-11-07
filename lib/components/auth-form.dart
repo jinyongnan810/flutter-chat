@@ -21,15 +21,24 @@ class _AuthFormState extends State<AuthForm>
   String _password = '';
   final _usernameFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
+
+  bool _isLoading = false;
+
   void _trySubmit() async {
     final validated = this._formKey.currentState!.validate();
     if (!validated) return;
+    setState(() {
+      _isLoading = true;
+    });
     // close the keyboard if its still there
     FocusScope.of(context).unfocus();
     this._formKey.currentState!.save();
     // print('ok');
     await widget.submitForm(
         _email.trim(), _username.trim(), _password.trim(), _isLogin);
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -123,18 +132,22 @@ class _AuthFormState extends State<AuthForm>
                       SizedBox(
                         height: 12,
                       ),
-                      ElevatedButton(
-                          onPressed: _trySubmit,
-                          child: _isLogin ? Text('Login') : Text('Sign up')),
-                      TextButton(
-                          onPressed: () {
-                            setState(() {
-                              this._isLogin = !this._isLogin;
-                            });
-                          },
-                          child: _isLogin
-                              ? Text('Create Account')
-                              : Text('Go to login'))
+                      _isLoading
+                          ? CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: _trySubmit,
+                              child:
+                                  _isLogin ? Text('Login') : Text('Sign up')),
+                      if (!_isLoading)
+                        TextButton(
+                            onPressed: () {
+                              setState(() {
+                                this._isLogin = !this._isLogin;
+                              });
+                            },
+                            child: _isLogin
+                                ? Text('Create Account')
+                                : Text('Go to login'))
                     ],
                   ),
                 ),

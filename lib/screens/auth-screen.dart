@@ -1,4 +1,5 @@
 import 'package:chat/components/auth-form.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +34,10 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         final authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(authResult.user!.uid)
+            .set({username: username, email: email});
       }
     } on FirebaseAuthException catch (error) {
       _showErrorDialog(
