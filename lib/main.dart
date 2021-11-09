@@ -1,5 +1,6 @@
 import 'package:chat/screens/auth-screen.dart';
 import 'package:chat/screens/chat-screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -15,19 +16,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Chat',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-        backgroundColor: Colors.pink,
-        accentColor: Colors.deepPurple,
-        // imply that accent color is dark, so the contrast text will be white
-        accentColorBrightness: Brightness.dark,
-        // setting elevated button theme
-        elevatedButtonTheme:
-            ElevatedButtonThemeData(style: elevatedButtonStyle),
-      ),
-      home: AuthScreen(),
-    );
+        title: 'Chat',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.pink,
+          backgroundColor: Colors.pink,
+          accentColor: Colors.deepPurple,
+          // imply that accent color is dark, so the contrast text will be white
+          accentColorBrightness: Brightness.dark,
+          // setting elevated button theme
+          elevatedButtonTheme:
+              ElevatedButtonThemeData(style: elevatedButtonStyle),
+        ),
+        home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (ctx, user) {
+            if (user.data != null) return ChatScreen();
+            return AuthScreen();
+          },
+        ));
   }
 }
