@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MessageInput extends StatefulWidget {
@@ -16,7 +17,11 @@ class _MessageInputState extends State<MessageInput> {
     });
     await FirebaseFirestore.instance
         .collection('chats/V4PSIMPKT9tLhhLnUdY4/messages')
-        .add({'text': _message, 'createdAt': Timestamp.now()});
+        .add({
+      'text': _message,
+      'createdAt': Timestamp.now(),
+      'userId': FirebaseAuth.instance.currentUser!.uid
+    });
     setState(() {
       _message = '';
       _isSending = false;
