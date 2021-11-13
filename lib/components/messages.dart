@@ -23,6 +23,7 @@ class Messages extends StatelessWidget {
           return ListView.builder(
             itemBuilder: (ctx, index) => Message(
                 docs[index]['text'],
+                docs[index]['userId'],
                 docs[index]['userId'] == user!.uid,
                 ValueKey(
                   docs[index].id,
