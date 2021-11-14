@@ -13,6 +13,20 @@ class Message extends StatelessWidget {
     return Row(
       mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
+        if (!isMe)
+          Container(
+            child: FutureBuilder(
+                future: UserFromFirestore.getUserInfo(uid),
+                builder: (ctx, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  return CircleAvatar(
+                    backgroundImage:
+                        NetworkImage((snapshot.data! as UserInfo).image),
+                  );
+                }),
+          ),
         Column(
           crossAxisAlignment:
               isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -20,7 +34,7 @@ class Message extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
               child: FutureBuilder(
-                  future: UserFromFirestore.getUserName(uid),
+                  future: UserFromFirestore.getUserInfo(uid),
                   builder: (ctx, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Text(
@@ -29,7 +43,7 @@ class Message extends StatelessWidget {
                       );
                     }
                     return Text(
-                      snapshot.data.toString(),
+                      (snapshot.data! as UserInfo).username,
                       style: TextStyle(
                           color: isMe
                               ? Colors.green[700]
@@ -59,7 +73,21 @@ class Message extends StatelessWidget {
                   )),
             ),
           ],
-        )
+        ),
+        if (isMe)
+          Container(
+            child: FutureBuilder(
+                future: UserFromFirestore.getUserInfo(uid),
+                builder: (ctx, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  return CircleAvatar(
+                    backgroundImage:
+                        NetworkImage((snapshot.data! as UserInfo).image),
+                  );
+                }),
+          ),
       ],
     );
   }
