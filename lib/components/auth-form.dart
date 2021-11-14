@@ -1,10 +1,13 @@
+import 'dart:io';
+
+import 'package:chat/components/image-picker.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
   AuthForm(this.submitForm);
   // declare detailed function format passed from parent
-  final Future<void> Function(
-      String email, String username, String password, bool isLogin) submitForm;
+  final Future<bool> Function(String email, String username, String password,
+      bool isLogin, File? image) submitForm;
 
   @override
   _AuthFormState createState() => _AuthFormState();
@@ -19,6 +22,7 @@ class _AuthFormState extends State<AuthForm>
   String _email = '';
   String _username = '';
   String _password = '';
+  File? _image;
   final _usernameFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
 
@@ -26,6 +30,11 @@ class _AuthFormState extends State<AuthForm>
 
   void _trySubmit() async {
     final validated = this._formKey.currentState!.validate();
+    if (_image == null && !_isLogin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please select an image as your icon.')));
+      return;
+    }
     if (!validated) return;
     setState(() {
       _isLoading = true;
@@ -34,11 +43,17 @@ class _AuthFormState extends State<AuthForm>
     FocusScope.of(context).unfocus();
     this._formKey.currentState!.save();
     // print('ok');
-    await widget.submitForm(
-        _email.trim(), _username.trim(), _password.trim(), _isLogin);
-    setState(() {
-      _isLoading = false;
-    });
+    final success = await widget.submitForm(
+        _email.trim(), _username.trim(), _password.trim(), _isLogin, _image);
+    if (!success) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _setUserImage(File image) {
+    this._image = image;
   }
 
   @override
@@ -65,6 +80,7 @@ class _AuthFormState extends State<AuthForm>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (!_isLogin) ImagePickerSet(_setUserImage),
                       TextFormField(
                         key: ValueKey('email'),
                         keyboardType: TextInputType.emailAddress,
