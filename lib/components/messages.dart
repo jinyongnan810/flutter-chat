@@ -9,7 +9,7 @@ class Messages extends StatelessWidget {
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('chats/V4PSIMPKT9tLhhLnUdY4/messages')
-            .orderBy('createdAt')
+            .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot> streamSnapshot) {
@@ -21,6 +21,7 @@ class Messages extends StatelessWidget {
           final docs = streamSnapshot.data!.docs;
           final user = FirebaseAuth.instance.currentUser;
           return ListView.builder(
+            reverse: true,
             itemBuilder: (ctx, index) => Message(
                 docs[index]['text'],
                 docs[index]['userId'],
