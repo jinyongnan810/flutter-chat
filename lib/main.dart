@@ -26,6 +26,7 @@ void main() async {
   });
   // background messages
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.instance.subscribeToTopic('chats-V4PSIMPKT9tLhhLnUdY4');
   runApp(MyApp());
 }
 

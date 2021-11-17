@@ -1,16 +1,21 @@
 const functions = require("firebase-functions");
+const admin = require("firebase-admin");
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+admin.initializeApp();
+const msg = admin.messaging();
+const fs = admin.firestore();
 
 exports.sendNotifications = functions.firestore
     .document("chats/V4PSIMPKT9tLhhLnUdY4/messages/{message}")
-    .onCreate((change, context) => {
-      console.log(change.data());
-      return;
+    .onCreate(async (change, context) => {
+      const data = change.data();
+      const userSnapshot = await fs.doc(`users/${data.userId}`).get();
+      const user = userSnapshot.data();
+      return msg.sendToTopic("chats-V4PSIMPKT9tLhhLnUdY4", {
+        notification: {
+          title: user.username,
+          body: data.text,
+          icon: user.image,
+        },
+      });
     });
