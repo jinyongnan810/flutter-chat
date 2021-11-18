@@ -40,6 +40,9 @@ class _MessageInputState extends State<MessageInput> {
               child: TextField(
             controller: _controller,
             decoration: InputDecoration(labelText: 'Send Message...'),
+            autocorrect: true,
+            textCapitalization: TextCapitalization.sentences,
+            enableSuggestions: true,
             onChanged: (value) {
               setState(() {
                 _message = value;

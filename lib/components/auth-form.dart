@@ -85,6 +85,9 @@ class _AuthFormState extends State<AuthForm>
                         key: ValueKey('email'),
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(labelText: 'Email'),
+                        autocorrect: false,
+                        textCapitalization: TextCapitalization.none,
+                        enableSuggestions: false,
                         validator: (value) {
                           if (value == null ||
                               value.isEmpty ||
@@ -118,6 +121,9 @@ class _AuthFormState extends State<AuthForm>
                             }
                             return null;
                           },
+                          autocorrect: false,
+                          textCapitalization: TextCapitalization.words,
+                          enableSuggestions: false,
                           onSaved: (value) {
                             this._username = value!;
                           },
