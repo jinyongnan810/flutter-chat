@@ -39,10 +39,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.9.2
+  flutter_native_splash: ^1.2.3
 
 flutter_icons:
   android: true
   image_path: "assets/chat.png"
+
+flutter_native_splash:
+  android: true
+  color: "#ffffff"
+  image: "assets/chat.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
